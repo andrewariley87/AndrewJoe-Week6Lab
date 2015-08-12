@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
+post 'posts/follow' => 'posts#follow', as: :follow
+post 'posts/unfollow' => 'posts#unfollow', as: :unfollow
+
   resources :posts
-  devise_for :users
+  devise_for :users, controllers: {registrations: "registrations"}
+  resources :after_signup
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -8,7 +12,7 @@ Rails.application.routes.draw do
 	root 'posts#index'
 
   # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+  get 'allposts' => 'posts#allposts', as: :allposts
 
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase

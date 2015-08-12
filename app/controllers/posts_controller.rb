@@ -4,7 +4,11 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.all
+    if current_user
+      @posts = Post.timeline(current_user).order(:created_at).page(params[:page]).per(10)
+    else
+      @posts = Post.all.order(:created_at).page(params[:page]).per(15)
+    end
   end
 
   # GET /posts/1
@@ -25,6 +29,7 @@ class PostsController < ApplicationController
   # POST /posts.json
   def create
     @post = Post.new(post_params)
+    @post.user_id = current_user.id
 
     respond_to do |format|
       if @post.save
@@ -59,6 +64,37 @@ class PostsController < ApplicationController
       format.html { redirect_to posts_url, notice: 'Post was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def follow
+    @post = Post.find(params[:id])
+    if @post.user_id == current_user.id
+      flash[:notice] = "You can't follow yourself"
+      redirect_to :back
+      format.js{}
+    else
+      current_user.follow(@post.user)
+      respond_to do |format|
+        format.html{flash[:notice] = "You are now following #{@post.user.name}."
+        redirect_to :back}
+
+        format.js{}
+      end
+    end
+  end
+
+  def unfollow
+    @post = Post.find(params[:id])
+    current_user.stop_following(@post.user)
+    respond_to do |format|
+      format.html{flash[:notice] = "You are no longer following #{@post.user.name}"
+      redirect_to :back}
+      format.js{}
+    end
+  end
+
+  def allposts
+    @posts = Post.all.order(:created_at).page(params[:page]).per(15)
   end
 
   private

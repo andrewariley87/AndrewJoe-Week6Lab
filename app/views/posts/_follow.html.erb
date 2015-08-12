@@ -1,0 +1,6 @@
+
+<% if current_user.following?(post.user)%>
+  <td class = "following<%= post.user.id%>"> <%= button_to 'Unfollow', unfollow_path(:id=> post.id), :remote => true %> </td>
+  <% else %>
+  <td class = "following<%= post.user.id%>"><%= button_to 'Follow', follow_path(:id => post.id), :remote => true %></td>
+<% end %>
