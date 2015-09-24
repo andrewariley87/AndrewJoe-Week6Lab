@@ -27,7 +27,7 @@ private
 	end
 
 	def redirect_to_finish_wizard(options = nil)
-		redirect_to finish_wizard_path
+		redirect_to_finish_wizard_path
 	end
 
 end
